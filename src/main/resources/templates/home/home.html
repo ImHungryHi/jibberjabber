@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>JibberJabber - Home</title>
+</head>
+<body class="text-center">
+  <p>Hi <span sec:authentication="name"></span>, you made it to JibberJabber!</p>
+  <p><a th:href="/logout">Logout</a></p>
+</body>
+</html>
