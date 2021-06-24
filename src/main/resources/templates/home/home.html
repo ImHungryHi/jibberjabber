@@ -2,10 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <title>JibberJabber - Home</title>
 </head>
 <body class="text-center">
-  <p>Hi <span sec:authentication="name"></span>, you made it to JibberJabber!</p>
-  <p><a th:href="/logout">Logout</a></p>
+  <p>Hi <span class="text-danger" sec:authentication="name"></span>, you made it to JibberJabber!</p>
+  <form action="/logout" method="post" name="logoutForm" hidden="hidden"><input type="hidden" name="_csrf" value="83195f9a-8a04-41ea-9f11-52542826bea0">
+      <input type="submit" value="Logout">
+  </form>
+  <p><a href="javascript: document.logoutForm.submit()">Logout</a></p>
 </body>
 </html>
