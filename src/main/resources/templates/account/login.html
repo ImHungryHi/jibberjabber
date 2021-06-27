@@ -10,11 +10,12 @@
 </head>
 <body class="text-center">
     <main class="form-signin">
-        <form action="#" th:action="@{/login}" th:object="${user}" method="post">
+        <form action="#" th:action="@{/login}" th:object="${loginForm}" method="post">
             <img class="mb-4" src="/img/logo.jpg" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
             <div class="form-floating">
+                <div class="alert alert-danger" th:if="${#fields.hasErrors('handle')}" th:errors="*{handle}"></div>
                 <input type="text" class="form-control" th:field="*{handle}" id="handle" name="handle" placeholder="name@example.com/handle">
                 <label for="handle">Email address/handle</label>
             </div>

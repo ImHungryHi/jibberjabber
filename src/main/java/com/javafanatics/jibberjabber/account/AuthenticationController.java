@@ -10,8 +10,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 public class AuthenticationController {
@@ -37,10 +39,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public String doLogin(@ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request) {
-        /*if (bindingResult.hasErrors()) {
-            return "/login";
-        }*/
+    public String doLogin(@Valid @ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return "account/login";
+        }
 
         String handle = loginForm.getHandle();
         String password = loginForm.getPassword();
@@ -50,7 +52,7 @@ public class AuthenticationController {
             return "redirect:/home";
         }
 
-        bindingResult.rejectValue("password", "Given credentials are incorrect");
+        bindingResult.rejectValue("handle", "login.invalid");
         return "account/login";
     }
 
@@ -63,10 +65,35 @@ public class AuthenticationController {
 
     // Google a way to look for extra fields that don't occur in entities
     @PostMapping("/register")
-    public String doRegister(@ModelAttribute RegisterForm registerForm, BindingResult bindingResult, HttpServletRequest request) {
-        //authWithAuthManager(request, registerForm.getHandle(), registerForm.getPassword());
+    public String doRegister(@Valid @ModelAttribute RegisterForm registerForm, BindingResult bindingResult, HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return "account/register";
+        }
 
-        return "redirect:/home";
+        String email = registerForm.getEmail();
+        String handle = registerForm.getHandle();
+        String password = registerForm.getPassword();
+        String passwordConfirmation = registerForm.getPasswordConfirmation();
+        int existsResult = userService.existsByMailHandle(email, handle);
+
+        if (existsResult == 1) {
+            bindingResult.rejectValue("email", "register.email.taken");
+        }
+        else if (existsResult > 1) {
+            bindingResult.rejectValue("handle", "register.handle.taken");
+        }
+
+        if (!password.equals(passwordConfirmation)) {
+            bindingResult.rejectValue("passwordConfirmation", "register.password_confirmation.mismatch");
+        }
+
+        if (!bindingResult.hasErrors()) {
+            userService.register(email, handle, password);
+            authWithAuthManager(request, handle, password);
+            return "redirect:/home";
+        }
+
+        return "account/register";
     }
 
     @GetMapping("/logout")

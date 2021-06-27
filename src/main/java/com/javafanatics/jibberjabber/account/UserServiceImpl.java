@@ -31,7 +31,33 @@ public class UserServiceImpl implements UserService {
         }
 
         // Encrypt password & compare
+        String encoded = passwordEncoder.encode(password);
+        return encoded.equals(user.getPassword());
+    }
 
-        return true;
+    @Override
+    public void register(String email, String handle, String password) {
+        User user = new User();
+        user.setEmail(email);
+        user.setHandle(handle);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEnabled(true);
+    }
+
+    @Override
+    public int existsByMailHandle(String email, String handle) {
+        User user = userRepository.findFirstByEmail(email);
+
+        if (user != null) {
+            return 1;
+        }
+
+        user = userRepository.findFirstByHandle(handle);
+
+        if (user != null) {
+            return 2;
+        }
+
+        return 0;
     }
 }
