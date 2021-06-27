@@ -41,8 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().formLogin()
                     .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .failureUrl("/login").permitAll()
+                    .loginProcessingUrl("/login").permitAll()
                 .and().csrf().disable()
                 .logout().permitAll();
     }
