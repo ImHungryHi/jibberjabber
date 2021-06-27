@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,17 +10,17 @@
 </head>
 <body class="text-center">
     <main class="form-signin">
-        <form action="#" th:action="@{/login}" method="post">
+        <form action="#" th:action="@{/login}" th:object="${user}" method="post">
             <img class="mb-4" src="/img/logo.jpg" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
+                <input type="text" class="form-control" th:field="*{handle}" id="handle" name="handle" placeholder="name@example.com/handle">
+                <label for="handle">Email address/handle</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
+                <input type="password" class="form-control" th:field="*{password}" id="password" name="password" placeholder="Password">
+                <label for="password">Password</label>
             </div>
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>

@@ -3,59 +3,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 
 @Controller
 public class AuthenticationController {
     AuthenticationManager authManager;
+    UserService userService;
 
     @Autowired
     public void setAuthManager(AuthenticationManager authManager) {
         this.authManager = authManager;
     }
 
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     // Let login handle the "/" mapping, with redirect if logged in
     @GetMapping("/login")
-    public String showLogin() {
-        return "account/login";
+    public ModelAndView showLogin() {
+        ModelAndView modelView = new ModelAndView("account/login");
+        modelView.addObject("loginForm", new LoginForm());
+        return modelView;
     }
 
     @PostMapping("/login")
-    public String doLogin(@RequestBody MultiValueMap<String, String> formData, HttpServletRequest request) {
-    //public String doLogin(@ModelAttribute User user, BindingResult bindingResult) {
+    public String doLogin(@ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request) {
         /*if (bindingResult.hasErrors()) {
             return "/login";
         }*/
 
-        String user = formData.getFirst("email");
-        String pass = formData.getFirst("password");
+        String handle = loginForm.getHandle();
+        String password = loginForm.getPassword();
 
-        authWithAuthManager(request, user, pass);
+        if (userService.authenticate(handle, password)) {
+            authWithAuthManager(request, handle, password);
+            return "redirect:/home";
+        }
 
-        return "redirect:/home";
+        bindingResult.rejectValue("password", "Given credentials are incorrect");
+        return "account/login";
     }
 
     @GetMapping("/register")
-    public String showRegister() {
-        return "account/register";
+    public ModelAndView showRegister() {
+        ModelAndView modelView = new ModelAndView("account/register");
+        modelView.addObject("registerForm", new RegisterForm());
+        return modelView;
     }
 
     // Google a way to look for extra fields that don't occur in entities
     @PostMapping("/register")
-    public String doRegister(@ModelAttribute User user, BindingResult bindingResult) {
-        return null;
+    public String doRegister(@ModelAttribute RegisterForm registerForm, BindingResult bindingResult, HttpServletRequest request) {
+        //authWithAuthManager(request, registerForm.getHandle(), registerForm.getPassword());
+
+        return "redirect:/home";
     }
 
     @GetMapping("/logout")
