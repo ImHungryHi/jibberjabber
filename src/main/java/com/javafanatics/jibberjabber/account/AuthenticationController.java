@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,48 +33,27 @@ public class AuthenticationController {
 
     // Let login handle the "/" mapping, with redirect if logged in
     @GetMapping("/login")
-    public ModelAndView showLogin() {
-        ModelAndView modelView = new ModelAndView("account/login");
-        modelView.addObject("loginForm", new LoginForm());
-        return modelView;
-    }
-
-    @PostMapping("/login")
-    public String doLogin(@Valid @ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request) {
-        if (bindingResult.hasErrors()) {
-            return "account/login";
-        }
-
-        String handle = loginForm.getHandle();
-        String password = loginForm.getPassword();
-
-        if (userService.authenticate(handle, password)) {
-            authWithAuthManager(request, handle, password);
-            return "redirect:/home";
-        }
-
-        bindingResult.rejectValue("handle", "login.invalid");
+    public String showLogin() {
         return "account/login";
     }
 
     @GetMapping("/register")
-    public ModelAndView showRegister() {
-        ModelAndView modelView = new ModelAndView("account/register");
-        modelView.addObject("registerForm", new RegisterForm());
-        return modelView;
+    public String showRegister(Model model) {
+        model.addAttribute("user", new User());
+        return "account/register";
     }
 
     // Google a way to look for extra fields that don't occur in entities
     @PostMapping("/register")
-    public String doRegister(@Valid @ModelAttribute RegisterForm registerForm, BindingResult bindingResult, HttpServletRequest request) {
+    public String doRegister(@Valid @ModelAttribute User user, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "account/register";
         }
 
-        String email = registerForm.getEmail();
-        String handle = registerForm.getHandle();
-        String password = registerForm.getPassword();
-        String passwordConfirmation = registerForm.getPasswordConfirmation();
+        String email = user.getEmail();
+        String handle = user.getHandle();
+        String password = user.getPassword();
+        String passwordConfirmation = user.getPasswordConfirmation();
         int existsResult = userService.existsByMailHandle(email, handle);
 
         if (existsResult == 1) {
@@ -94,12 +74,6 @@ public class AuthenticationController {
         }
 
         return "account/register";
-    }
-
-    @GetMapping("/logout")
-    public String doLogout() {
-        // Logout
-        return "redirect:/login";
     }
 
     public void authWithAuthManager(HttpServletRequest request, String username, String password) {

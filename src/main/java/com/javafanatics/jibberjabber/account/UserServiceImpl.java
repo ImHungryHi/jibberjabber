@@ -2,6 +2,9 @@ package com.javafanatics.jibberjabber.account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import com.javafanatics.jibberjabber.account.UserService.*;
+
+import java.util.List;
 
 @Repository
 public class UserServiceImpl implements UserService {
@@ -19,45 +22,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticate(String login, String password) {
-        User user = userRepository.findFirstByEmail(login);
+    public void save(User user) throws PasswordConfirmationException, DuplicateMailException, DuplicateHandleException {
+        if (user.getPassword().equals(user.getPasswordConfirmation())) {
+            throw new UserService.PasswordConfirmationException("Passwords do not match");
+        }
 
-        if (user == null) {
-            user = userRepository.findFirstByHandle(login);
+        List<User> results = userRepository.findByMailOrHandle(user.getEmail(), user.getHandle());
 
-            if (user == null) {
-                return false;
+        // If size == 0 -> this is skipped
+        for (int x = 0; x < results.size(); x++) {
+            User u = results.get(x);
+
+            if (u.getEmail().equals(user.getEmail())) {
+                throw new DuplicateMailException("Email is already taken");
+            }
+            else if (u.getHandle().equals(user.getHandle())) {
+                throw new DuplicateHandleException("Handle is already taken");
             }
         }
 
+
+        /*
         // Encrypt password & compare
         String encoded = passwordEncoder.encode(password);
         return encoded.equals(user.getPassword());
-    }
-
-    @Override
-    public void register(String email, String handle, String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setHandle(handle);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setEnabled(true);
-    }
-
-    @Override
-    public int existsByMailHandle(String email, String handle) {
-        User user = userRepository.findFirstByEmail(email);
-
-        if (user != null) {
-            return 1;
-        }
-
-        user = userRepository.findFirstByHandle(handle);
-
-        if (user != null) {
-            return 2;
-        }
-
-        return 0;
+        */
     }
 }

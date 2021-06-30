@@ -10,17 +10,23 @@
 </head>
 <body class="text-center">
     <main class="form-signin">
-        <form action="#" th:action="@{/login}" th:object="${loginForm}" method="post">
+        <form action="#" th:action="@{/login}" method="post">
             <img class="mb-4" src="/img/logo.jpg" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
+            <div class="alert alert-danger" th:if="${param.error}">
+                Invalid username and password combination.
+            </div>
+            <div class="alert alert-success" th:if="${param.logout}">
+                You've been successfully logged out.
+            </div>
+
             <div class="form-floating">
-                <div class="alert alert-danger" th:if="${#fields.hasErrors('handle')}" th:errors="*{handle}"></div>
-                <input type="text" class="form-control" th:field="*{handle}" id="handle" name="handle" placeholder="name@example.com/handle">
-                <label for="handle">Email address/handle</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="name@example.com/handle">
+                <label for="username">Email address/handle</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" th:field="*{password}" id="password" name="password" placeholder="Password">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                 <label for="password">Password</label>
             </div>
 

@@ -11,6 +11,6 @@ public class RootController {
             return "redirect:login";
         }
 
-        return "redirect:home";
+        return "home";
     }
 }

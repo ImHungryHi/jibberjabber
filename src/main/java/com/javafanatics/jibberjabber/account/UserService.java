@@ -1,7 +1,29 @@
 package com.javafanatics.jibberjabber.account;
 
 public interface UserService {
-    boolean authenticate(String login, String password);
-    void register(String email, String handle, String password);
-    int existsByMailHandle(String email, String handle);
+    class PasswordConfirmationException extends Exception {
+        public PasswordConfirmationException(String message) {
+            super(message);
+        }
+    }
+
+    class PasswordMismatchException extends Exception {
+        public PasswordMismatchException(String message) {
+            super(message);
+        }
+    }
+
+    class DuplicateMailException extends Exception {
+        public DuplicateMailException(String message) {
+            super(message);
+        }
+    }
+
+    class DuplicateHandleException extends Exception {
+        public DuplicateHandleException(String message) {
+            super(message);
+        }
+    }
+
+    void save(User user) throws PasswordConfirmationException, PasswordMismatchException, DuplicateMailException, DuplicateHandleException;
 }
