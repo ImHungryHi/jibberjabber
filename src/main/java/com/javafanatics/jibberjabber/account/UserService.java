@@ -1,8 +1,24 @@
 package com.javafanatics.jibberjabber.account;
 
 public interface UserService {
+    //void save(User user) throws PasswordConfirmationException, PasswordConfirmationEmptyException, PasswordMismatchException, DuplicateMailException, DuplicateHandleException;
+    void save(User user) throws UserValidationException;
+    //void authenticate(User user) throws PasswordMismatchException;
+
+    class UserValidationException extends Exception {
+        public UserValidationException(String message) {
+            super(message);
+        }
+    }
+
     class PasswordConfirmationException extends Exception {
         public PasswordConfirmationException(String message) {
+            super(message);
+        }
+    }
+
+    class PasswordConfirmationEmptyException extends Exception {
+        public PasswordConfirmationEmptyException(String message) {
             super(message);
         }
     }
@@ -24,6 +40,4 @@ public interface UserService {
             super(message);
         }
     }
-
-    void save(User user) throws PasswordConfirmationException, PasswordMismatchException, DuplicateMailException, DuplicateHandleException;
 }

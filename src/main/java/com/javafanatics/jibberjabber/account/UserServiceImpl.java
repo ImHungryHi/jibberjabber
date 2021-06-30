@@ -21,10 +21,25 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Justification for the use of UserValidationException above all others - this allows for multiple exceptions simultaneously
     @Override
-    public void save(User user) throws PasswordConfirmationException, DuplicateMailException, DuplicateHandleException {
-        if (user.getPassword().equals(user.getPasswordConfirmation())) {
-            throw new UserService.PasswordConfirmationException("Passwords do not match");
+    //public void save(User user) throws PasswordConfirmationException, PasswordConfirmationEmptyException, DuplicateMailException, DuplicateHandleException {
+    public void save(User user) throws UserValidationException {
+        StringBuilder strExceptions = new StringBuilder();
+        String passConfirmation = user.getPasswordConfirmation();
+
+        if (user.getPassword().equals(passConfirmation)) {
+            //throw new PasswordConfirmationException("Passwords do not match");
+            strExceptions.append("[PasswordConfirmationException] Passwords do not match");
+        }
+
+        if (passConfirmation == null || passConfirmation.equals("")) {
+            //throw new PasswordConfirmationEmptyException("Password confirmation turned up empty");
+            if (strExceptions.length() > 0) {
+                strExceptions.append("\n");
+            }
+
+            strExceptions.append("[PasswordConfirmationEmptyException] Password confirmation turned up empty");
         }
 
         List<User> results = userRepository.findByMailOrHandle(user.getEmail(), user.getHandle());
@@ -34,18 +49,41 @@ public class UserServiceImpl implements UserService {
             User u = results.get(x);
 
             if (u.getEmail().equals(user.getEmail())) {
-                throw new DuplicateMailException("Email is already taken");
+                //throw new DuplicateMailException("Email is already taken");
+                if (strExceptions.length() > 0) {
+                    strExceptions.append("\n");
+                }
+
+                strExceptions.append("[DuplicateMailException] Email is already taken");
             }
             else if (u.getHandle().equals(user.getHandle())) {
-                throw new DuplicateHandleException("Handle is already taken");
+                //throw new DuplicateHandleException("Handle is already taken");
+                if (strExceptions.length() > 0) {
+                    strExceptions.append("\n");
+                }
+
+                strExceptions.append("[DuplicateHandleException] Handle is already taken");
             }
         }
 
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
 
-        /*
-        // Encrypt password & compare
-        String encoded = passwordEncoder.encode(password);
-        return encoded.equals(user.getPassword());
-        */
+        if (strExceptions.length() > 0) {
+            throw new UserValidationException(strExceptions.toString());
+        }
     }
+
+    /*//@Override
+    public void authenticate(User user) throws PasswordMismatchException {
+        // We should only be able to get 1 result because:
+        //   registration only allows unique handles/mail addresses
+        //   the form input is either a mail address or a handle, not both
+        User dbUser = userRepository.findByMailOrHandle(user.getHandle(), user.getHandle()).get(0);
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+
+        if (dbUser.getPassword().equals(encodedPassword)) {
+            throw new PasswordMismatchException("Passwords do not match");
+        }
+    }*/
 }
