@@ -12,29 +12,29 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import com.javafanatics.jibberjabber.account.UserService.*;
 
 @Controller
 public class AuthenticationController {
-    AuthenticationManager authManager;
     UserService userService;
+    /*
+    AuthenticationManager authManager;
     PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-        String alice = "whiterabbit";
-        String check = "$2a$10$mMohR2ZOs7T.HL/cJol.Luko1ulnRgy5476svJ.fcJCtjZMtAjvE.";
-        String encoded = passwordEncoder.encode(alice);
-        boolean stophere = true;
     }
 
     @Autowired
     public void setAuthManager(AuthenticationManager authManager) {
         this.authManager = authManager;
     }
+    */
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -93,17 +93,26 @@ public class AuthenticationController {
         */
 
         if (!bindingResult.hasErrors()) {
-            authWithAuthManager(request, user.getEmail(), user.getPassword());
+            //authWithAuthManager(request, user.getEmail(), user.getPassword());
+            authWithHttpServletRequest(request, user.getEmail(), user.getPassword());
             return "redirect:/";
         }
 
         return "account/register";
     }
 
-    public void authWithAuthManager(HttpServletRequest request, String username, String password) {
+    public void authWithHttpServletRequest(HttpServletRequest request, String email, String password) {
+        try {
+            request.login(email, password);
+        } catch (ServletException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    /*public void authWithAuthManager(HttpServletRequest request, String username, String password) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
         authToken.setDetails(new WebAuthenticationDetails(request));
         Authentication authentication = authManager.authenticate(authToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
+    }*/
 }

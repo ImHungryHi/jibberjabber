@@ -8,7 +8,7 @@
 </head>
 <body class="text-center">
   <p>Hi <span class="text-danger" sec:authentication="name"></span>, you made it to JibberJabber!</p>
-  <form action="/logout" method="post" name="logoutForm" hidden="hidden"><input type="hidden" name="_csrf" value="83195f9a-8a04-41ea-9f11-52542826bea0">
+  <form th:action="@{/logout}" method="post" name="logoutForm" th:hidden="true">
       <input type="submit" value="Logout">
   </form>
   <p><a href="javascript: document.logoutForm.submit()">Logout</a></p>
