@@ -68,12 +68,21 @@ public class AuthenticationController {
             String msg = ex.getMessage();
 
             if (msg.contains("PasswordConfirmationEmptyException")) {
-                bindingResult.rejectValue("passwordConfirmation", "register.password_confirmation.empty");
+                bindingResult.rejectValue("passwordConfirmation", "register.password_check.empty");
             }
             else if (msg.contains("PasswordConfirmationException")) {
-                bindingResult.rejectValue("passwordConfirmation", "register.password_confirmation.mismatch");
+                bindingResult.rejectValue("passwordConfirmation", "register.password_check.mismatch");
             }
 
+            if (msg.contains("HandleLengthException")) {
+                bindingResult.rejectValue("handle", "register.handle");
+            }
+            if (msg.contains("PasswordLengthException")) {
+                bindingResult.rejectValue("password", "register.password");
+            }
+            if (msg.contains("EmptyEmailException")) {
+                bindingResult.rejectValue("email", "register.email.empty");
+            }
             if (msg.contains("PasswordMismatchException")) {
                 bindingResult.rejectValue("password", "register.password");
             }
@@ -94,7 +103,8 @@ public class AuthenticationController {
 
         if (!bindingResult.hasErrors()) {
             //authWithAuthManager(request, user.getEmail(), user.getPassword());
-            authWithHttpServletRequest(request, user.getEmail(), user.getPassword());
+            // After saving, we'll have an encrypted password so we'll choose the unencrypted "password confirmation" to log in
+            authWithHttpServletRequest(request, user.getEmail(), user.getPasswordConfirmation());
             return "redirect:/";
         }
 

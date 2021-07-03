@@ -28,8 +28,32 @@ public class UserServiceImpl implements UserService {
         StringBuilder strExceptions = new StringBuilder();
         String passConfirmation = user.getPasswordConfirmation();
 
-        if (user.getPassword().equals(passConfirmation)) {
+        if (user.getEmail() == null || user.getEmail().equals("")) {
+            strExceptions.append("[EmptyEmailException] Mail address not provided");
+        }
+
+        if (user.getHandle() == null || user.getHandle().length() < 3) {
+            if (strExceptions.length() > 0) {
+                strExceptions.append("\n");
+            }
+
+            strExceptions.append("[HandleLengthException] User handle empty or not long enough");
+        }
+
+        if (user.getPassword() == null || user.getPassword().length() < 8) {
+            if (strExceptions.length() > 0) {
+                strExceptions.append("\n");
+            }
+
+            strExceptions.append("[PasswordLengthException] User password empty or not long enough");
+        }
+
+        if (!user.getPassword().equals(passConfirmation)) {
             //throw new PasswordConfirmationException("Passwords do not match");
+            if (strExceptions.length() > 0) {
+                strExceptions.append("\n");
+            }
+
             strExceptions.append("[PasswordConfirmationException] Passwords do not match");
         }
 
@@ -72,6 +96,8 @@ public class UserServiceImpl implements UserService {
         if (strExceptions.length() > 0) {
             throw new UserValidationException(strExceptions.toString());
         }
+
+        userRepository.save(user);
     }
 
     /*//@Override
