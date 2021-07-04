@@ -1,10 +1,9 @@
 package com.javafanatics.jibberjabber.account;
+import com.javafanatics.jibberjabber.message.Jibber;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import java.util.List;
 
 // Opted to let validation be handled by the save function as it allows simultaneous validation of every field
 //   commented out all validation annotations
@@ -34,4 +33,7 @@ public class User {
 
     private boolean enabled = true;
     private String role = "USER";
+
+    @OneToMany(mappedBy = "user")
+    private List<Jibber> jibbers;
 }

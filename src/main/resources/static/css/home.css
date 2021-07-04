@@ -1,0 +1,22 @@
+div.content-container {
+    max-width:600px;
+    margin:auto;
+}
+
+div.jibber-container {
+    display:flex;
+}
+
+div.avatar-container {
+    width:100px;
+}
+
+
+div.jibber-form,
+div.jibber-message{
+    flex:1;
+}
+
+jibber-header-handle {
+    font-weight:bold;
+}

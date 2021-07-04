@@ -53,25 +53,4 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return user.isEnabled();
     }
-
-    // Create an MD5 hash for a static random gravatar
-    public String getMD5Hash(String email) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            byte[] data = messageDigest.digest(user.getEmail().getBytes());
-            StringBuffer buffer = new StringBuffer();
-
-            for (int x = 0; x < data.length; x++) {
-                buffer.append(Integer.toHexString(data[x] & 0xFF | 0x100).substring(1, 3));
-            }
-
-            return buffer.toString();
-        }
-        catch (NoSuchAlgorithmException ex) {
-            // Nope, Chuck Testa!
-        }
-
-        // Return nothing in case of errors
-        return null;
-    }
 }

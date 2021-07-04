@@ -1,16 +1,76 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:https="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jibber Jabber</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <title>JibberJabber - Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link href="/css/home.css" rel="stylesheet">
 </head>
-<body class="text-center">
-  <p>Hi <span class="text-danger" sec:authentication="name"></span>, you made it to JibberJabber!</p>
-  <form th:action="@{/logout}" method="post" name="logoutForm" th:hidden="true">
-      <input type="submit" value="Logout">
-  </form>
-  <p><a href="javascript: document.logoutForm.submit()">Logout</a></p>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-auto bg-light sticky-top">
+            <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+                <a href="/" class="d-block p-3 link-dark text-decoration-none">
+                    <i class="bi-chat-text fs-1"></i>
+                </a>
+                <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center justify-content-between w-100 px-3 align-items-center">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link py-3 px-2"> <!-- Thymeleaf Link to /home-->
+                            <i class="bi-house fs-1"></i>
+                        </a>
+                    </li>
+                    <li sec:authorize="hasAuthority('USER')"> <!-- Only show for logged in users-->
+                        <a th:href="@{/} + ${handle}" class="nav-link py-3 px-2"> <!-- Thymeleaf Link to <handle>-->
+                            <i class="bi-person fs-1"></i>
+                        </a>
+                    </li>
+                    <li sec:authorize="hasAuthority('USER')"> <!-- Only show for logged in users-->
+                        <a th:href="@{/users}" class="nav-link py-3 px-2" > <!-- Thymeleaf Link to /users-->
+                            <i class="bi-people fs-1"></i>
+                        </a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()"> <!-- Only show for logged in users-->
+                        <a href="javascript: document.logoutForm.submit()" class="nav-link py-3 px-2" >
+                            <i class="bi-box-arrow-left fs-1"></i>
+                        </a>
+                        <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+                            <input type="submit" value="Logout" />
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm p-3 min-vh-100" >
+            <div class="jibber-feed">
+                <div class="jibber-feed">
+                    <div th:if="${#lists.isEmpty(jibbers)}" class="content-container">
+                        <div class="alert alert-warning">
+                            <h3>No Jibbers yet from @<span th:text="${handle}"></span></h3>
+                        </div>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(jibbers)}" class="content-container">
+                        <div class="profile-header"><h3>Recent Jibbers from @<span th:text="${handle}"></span></h3></div>
+                        <div th:each="jibber : ${jibbers}" class="jibber-container mb-3 p-3 border bg-light"> <!--Loop throught all Jibbers-->
+                            <div class="avatar-container">
+                                <img th:src="@{'http://www.gravatar.com/avatar/'} + ${tools.getMD5Hash(jibber.user.email)} + '?d=retro'" /> <!--Show users avatar (https://nl.gravatar.com/site/implement/images/)-->
+                            </div>
+                            <div class="jibber-message">
+                                <div class="jibber-header mb-2">
+                                    <b><span th:text="${jibber.user.handle}" class="jibber-header-handle"></span></b> <!--Show Author handle-->
+                                    at
+                                    <span th:text="${jibber.createdDate}" class="jibber-header-date"></span> <!--Show the date-->
+                                </div>
+                                <div th:text="${jibber.message}" class="jibber-message"></div> <!--Finally, show the Jibber message-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-</html>
