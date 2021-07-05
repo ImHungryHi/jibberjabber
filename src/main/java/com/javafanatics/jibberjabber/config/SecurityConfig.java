@@ -62,8 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                    .antMatchers("/users").authenticated()  // Setting this first will require login for users page
                     .antMatchers("/register", "/css/**", "/img/**", "/js/**", "/**").permitAll()
-                    .antMatchers("/", "/users").denyAll()
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
