@@ -55,16 +55,26 @@
                     </div>
                     <div th:unless="${#lists.isEmpty(users)}" class="content-container">
                         <div class="profile-header"><h3>User list</h3></div>
-                        <div th:each="user : ${users}" class="jibber-container mb-3 p-3 border bg-light"> <!--Loop throught all Jibbers-->
+                        <div th:each="user : ${users}" class="user-container mb-3 p-3 border bg-light"> <!--Loop throught all Jibbers-->
                             <div class="avatar-container">
                                 <img th:src="@{'http://www.gravatar.com/avatar/'} + ${tools.getMD5Hash(user.email)} + '?d=retro'" /> <!--Show users avatar (https://nl.gravatar.com/site/implement/images/)-->
                             </div>
-                            <div class="jibber-message">
+                            <div class="jibber-user-name">
                                 <div class="jibber-header mb-2">
-                                    <b><span th:text="${user.handle}" class="jibber-header-handle"></span></b> <!--Show Author handle-->
-                                    (<span th:text="${user.role}" class="jibber-message"></span>)
+                                    <span th:text="${user.handle}" class="jibber-header-handle"></span> <!--Show Author handle-->
+                                    <span class="jibber-user-role">(<span th:text="${user.role}" class="jibber-message"></span>)</span>
                                 </div>
                                 <div th:text="${user.email}" class="jibber-header-date"></div>
+                            </div>
+                            <div class="jibber-user-action" sec:authorize="hasAuthority('USER')">
+                                <form th:action="@{/user/follow}" th:if="${!activeUser.follows.contains(user)}" method="post" th:object="${user}">
+                                    <input class="hidden" type="hidden" th:value="*{handle}" name="handle" />
+                                    <input class="btn btn-primary float-end" type="submit" value="Follow" />
+                                </form>
+                                <form th:action="@{/user/unfollow}" th:if="${activeUser.follows.contains(user)}" method="post" th:object="${user}">
+                                    <input class="hidden" type="hidden" th:value="*{handle}" name="handle" />
+                                    <input class="btn btn-warning float-end" type="submit" value="Unfollow" />
+                                </form>
                             </div>
                         </div>
                     </div>

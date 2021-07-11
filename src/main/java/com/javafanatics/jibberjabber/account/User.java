@@ -36,4 +36,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Jibber> jibbers;
+
+    @ManyToMany
+    @JoinTable(name = "user_relations",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "parent_id"))
+    private List<User> follows; // user_id follows parent_id
+
+    @ManyToMany(mappedBy = "follows")
+    private List<User> followedBy; // parent_id is followed by user_id
 }

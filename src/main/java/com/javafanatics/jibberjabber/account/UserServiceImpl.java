@@ -3,6 +3,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import com.javafanatics.jibberjabber.account.UserService.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -100,8 +102,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addFollow(User follower, User other) {
+        follower.getFollows().add(other); // In-memory still points to the same list
+        userRepository.save(follower);
+    }
+
+    @Override
+    public void removeFollow(User follower, User other) {
+        follower.getFollows().remove(other); // In-memory still points to the same list
+        userRepository.save(follower);
+    }
+
+    @Override
     public List<User> getAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public List<User> getAllSortFollows(User user) {
+        List<User> others = userRepository.findAllOtherUsers(user.getId());
+        List<User> follows = new ArrayList<>();
+        List<User> strangers = new ArrayList<>();
+
+        for (User otherUser : others) {
+            if (otherUser.getFollowedBy().contains(user)) {
+                follows.add(otherUser);
+            }
+            else {
+                strangers.add(otherUser);
+            }
+        }
+
+        follows.sort((o1, o2) -> o1.getHandle().compareToIgnoreCase(o2.getHandle()));
+        strangers.sort((o1, o2) -> o1.getHandle().compareToIgnoreCase(o2.getHandle()));
+        follows.addAll(strangers);
+
+        return follows;
+    }
+
+    @Override
+    public User getByHandle(String handle) {
+        return userRepository.findByHandle(handle);
     }
 
     /*//@Override

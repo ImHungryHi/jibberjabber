@@ -3,20 +3,49 @@ div.content-container {
     margin:auto;
 }
 
+div.user-container,
 div.jibber-container {
     display:flex;
 }
+
+div.user-container {
+    align-items: center;
+}
+
 
 div.avatar-container {
     width:100px;
 }
 
+div.jibber-user-name span.jibber-header-handle {
+    font-size: 38px;
+}
+
+div.jibber-user-name span span.jibber-user-role {
+    font-size: 20px;
+}
+
+div.jibber-user-action  {
+    margin-left:auto;
+}
 
 div.jibber-form,
 div.jibber-message{
     flex:1;
 }
 
+div.jibber-form {
+    overflow:auto;
+}
+
 jibber-header-handle {
     font-weight:bold;
+}
+
+jibber-user img {
+    vertical-align: center;
+}
+
+jibber-user span {
+    vertical-align: center;
 }

@@ -5,7 +5,11 @@ import java.util.List;
 public interface UserService {
     //void save(User user) throws PasswordConfirmationException, PasswordConfirmationEmptyException, PasswordMismatchException, DuplicateMailException, DuplicateHandleException;
     void save(User user) throws UserValidationException;
+    void addFollow(User follower, User other);
+    void removeFollow(User follower, User other);
     List<User> getAll();
+    List<User> getAllSortFollows(User user);
+    User getByHandle(String handle);
     //void authenticate(User user) throws PasswordMismatchException;
 
     class UserValidationException extends Exception {
