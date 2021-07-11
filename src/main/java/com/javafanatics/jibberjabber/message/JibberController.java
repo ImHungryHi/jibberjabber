@@ -26,13 +26,13 @@ public class JibberController {
     }
 
     @GetMapping("/")
-    public String handleRedirect(Model model, Principal principal) {
+    public String showHome(Model model, Principal principal) {
         if (principal == null) {
             return "redirect:login";
         }
 
         String handle = principal.getName();
-        List<Jibber> jibbers = jibberService.getJibbersByUserHandle(handle);
+        List<Jibber> jibbers = jibberService.getJibberHomeByHandle(handle);
 
         model.addAttribute("handle", handle);
         model.addAttribute("jibbers", jibbers);

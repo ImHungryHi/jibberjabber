@@ -4,4 +4,5 @@ import java.util.List;
 public interface JibberService {
     void save(Jibber jibber);
     List<Jibber> getJibbersByUserHandle(String handle);
+    List<Jibber> getJibberHomeByHandle(String handle);
 }

@@ -21,4 +21,9 @@ public class JibberServiceImpl implements JibberService {
     public List<Jibber> getJibbersByUserHandle(String handle) {
         return jibberRepository.findByHandle(handle);
     }
+
+    @Override
+    public List<Jibber> getJibberHomeByHandle(String handle) {
+        return jibberRepository.findHomeByHandle(handle);
+    }
 }
