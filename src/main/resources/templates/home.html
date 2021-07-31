@@ -47,13 +47,23 @@
         </div>
         <div class="col-sm p-3 min-vh-100" >
             <div class="jibber-feed">
-                <div class="jibber-feed">
-                    <div th:if="${#lists.isEmpty(jibbers)}" class="content-container">
+                <div class="content-container">
+                    <div class="jibber-form mb-3" sec:authorize="isAuthenticated()">
+                        <form method="post" th:action="@{/jibber}" th:object="${jabber}">
+                            <div class="form-info">
+                                <textarea class="form-control" rows="2" name="message"></textarea>
+                            </div>
+                            <div class="form-actions mt-1">
+                                <input type="submit" class="btn btn-primary float-end" value="Jibber" />
+                            </div>
+                        </form>
+                    </div>
+                    <div th:if="${#lists.isEmpty(jibbers)}">
                         <div class="alert alert-warning">
                             <h3>No Jibbers yet from @<span th:text="${handle}"></span></h3>
                         </div>
                     </div>
-                    <div th:unless="${#lists.isEmpty(jibbers)}" class="content-container">
+                    <div th:unless="${#lists.isEmpty(jibbers)}">
                         <div class="profile-header"><h3>Recent Jibbers from @<span th:text="${handle}"></span></h3></div>
                         <div th:each="jibber : ${jibbers}" class="jibber-container mb-3 p-3 border bg-light"> <!--Loop throught all Jibbers-->
                             <div class="avatar-container">
