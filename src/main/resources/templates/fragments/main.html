@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:https="http://www.w3.org/1999/xhtml">
+<head th:fragment="header (pageTitle, pageStyle)">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${'Jibber Jabber - ' + pageTitle}"></title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link th:href="${pageStyle}" rel="stylesheet">
+</head>
+<body>
+    <nav class="col-sm-auto bg-light sticky-top" th:fragment="menu">
+        <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+            <a href="/" class="d-block p-3 link-dark text-decoration-none">
+                <i class="bi-chat-text fs-1"></i>
+            </a>
+            <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center justify-content-between w-100 px-3 align-items-center">
+                <li class="nav-item">
+                    <a th:href="@{/}" class="nav-link py-3 px-2"> <!-- Thymeleaf Link to /home-->
+                        <i class="bi-house fs-1"></i>
+                    </a>
+                </li>
+                <li sec:authorize="hasAuthority('USER')"> <!-- Only show for logged in users-->
+                    <a th:href="@{/} + ${handle}" class="nav-link py-3 px-2"> <!-- Thymeleaf Link to <handle>-->
+                        <i class="bi-person fs-1"></i>
+                    </a>
+                </li>
+                <li sec:authorize="hasAuthority('USER')"> <!-- Only show for logged in users-->
+                    <a th:href="@{/users}" class="nav-link py-3 px-2" > <!-- Thymeleaf Link to /users-->
+                        <i class="bi-people fs-1"></i>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()"> <!-- Only show for logged in users-->
+                    <a href="javascript: document.logoutForm.submit()" class="nav-link py-3 px-2" >
+                        <i class="bi-box-arrow-left fs-1"></i>
+                    </a>
+                    <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+                        <input type="submit" value="Logout" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</body>
+</html>

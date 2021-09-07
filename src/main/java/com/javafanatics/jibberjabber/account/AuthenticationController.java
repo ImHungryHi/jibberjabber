@@ -21,20 +21,6 @@ import com.javafanatics.jibberjabber.account.UserService.*;
 @Controller
 public class AuthenticationController {
     UserService userService;
-    /*
-    AuthenticationManager authManager;
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setAuthManager(AuthenticationManager authManager) {
-        this.authManager = authManager;
-    }
-    */
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -44,7 +30,6 @@ public class AuthenticationController {
     // Let login handle the "/" mapping, with redirect if logged in
     @GetMapping("/login")
     public String showLogin() {
-
         return "account/login";
     }
 

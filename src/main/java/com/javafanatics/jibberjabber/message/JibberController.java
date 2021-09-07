@@ -2,6 +2,7 @@ package com.javafanatics.jibberjabber.message;
 import com.javafanatics.jibberjabber.Tools;
 import com.javafanatics.jibberjabber.account.User;
 import com.javafanatics.jibberjabber.account.UserService;
+import com.javafanatics.jibberjabber.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.util.List;
 public class JibberController {
     private UserService userService;
     private JibberService jibberService;
+    private NotificationService notificationService;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -26,8 +28,13 @@ public class JibberController {
     }
 
     @Autowired
-    public void setTweetService(JibberService jibberService) {
+    public void setJibberService(JibberService jibberService) {
         this.jibberService = jibberService;
+    }
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/")
@@ -47,7 +54,7 @@ public class JibberController {
         return "home";
     }
 
-    @GetMapping("/{handle}")
+    @GetMapping("/{handle:^(?!user$|home$).*}")
     public String showUserWall(@PathVariable String handle, Model model) {
         List<Jibber> jibbers = jibberService.getJibbersByUserHandle(handle);
 
@@ -65,11 +72,12 @@ public class JibberController {
         jabber.setCreatedDate(new Date());
         jabber.setUser(currentUser);
         jibberService.save(jabber);
+        notificationService.sendNotification(currentUser, jabber.getMessage());
         return "redirect:/";
     }
 
-    @PostMapping("/{id}/jibber")
-    public String doWallJibber(@PathVariable int id, @ModelAttribute Jibber jibber, Authentication authentication) {
+    @PostMapping("/{handle:^(?!user$|home$).*}/jibber")
+    public String doWallJibber(@PathVariable String handle, @ModelAttribute Jibber jibber, Authentication authentication) {
         return "redirect:/";
     }
 }
