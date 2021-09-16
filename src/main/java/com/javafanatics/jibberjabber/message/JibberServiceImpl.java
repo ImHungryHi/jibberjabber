@@ -18,6 +18,16 @@ public class JibberServiceImpl implements JibberService {
     }
 
     @Override
+    public Jibber getById(int id) {
+        return jibberRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Jibber> getAll() {
+        return jibberRepository.findAll();
+    }
+
+    @Override
     public List<Jibber> getJibbersByUserHandle(String handle) {
         return jibberRepository.findByHandle(handle);
     }
